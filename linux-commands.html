@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Linux 常用命令速查：从 cd 到 chmod · /var/log/me</title>
+<meta name="description" content="Linux 入门阶段真正用得上的一批命令：导航、文件操作、读写重定向、管道、vim、权限位与 gcc 编译。">
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wrap">
+    <a class="brand" href="../index.html"><span class="dot"></span>/var/log/me</a>
+    <nav>
+      <a href="../index.html">首页</a>
+      <a href="../about.html">关于</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <article class="article">
+
+    <h1>Linux 常用命令速查：从 cd 到 chmod</h1>
+    <div class="post-meta"><span>2026-11-08</span><span class="tag">linux</span><span class="tag">笔记</span></div>
+
+    <p>这是我在 Kali 虚拟机上练习 Linux 基础时的整理。命令不多，但都是从“完全不会”到“能自己干活”这一段的必需品。</p>
+
+    <h2>一、先搞清楚自己在哪</h2>
+
+    <p>Linux 的整个文件系统是一棵倒着的树，最顶端是 <code>/</code>（根目录）。没有 C 盘 D 盘，所有东西都挂在这一个 <code>/</code> 下面。</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>命令</th><th>作用</th><th>记忆</th></tr></thead>
+        <tbody>
+          <tr><td><code>pwd</code></td><td>显示当前所在目录</td><td>print working directory</td></tr>
+          <tr><td><code>cd</code></td><td>切换目录</td><td>change directory</td></tr>
+          <tr><td><code>ls</code></td><td>列出目录内容</td><td>list</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p><code>cd</code> 的四种常用写法，区别是“出发点”不同：</p>
+
+    <pre><code>cd /home/kali/web   # 绝对路径：从 / 开始，一定准确
+cd web              # 相对路径：从当前位置往下走
+cd ..               # 回上一级（两个点 = 父目录）
+cd -                # 回到上一次待过的目录
+cd                  # 不带参数 = 回家，等于 cd ~</code></pre>
+
+    <blockquote>
+      <p>容易错的地方：<code>~/web</code> 是对的，<code>~web</code> 会被当成“用户 web 的家目录”；迷路时一律用绝对路径。</p>
+    </blockquote>
+
+    <h2>二、创建、复制、移动、删除</h2>
+
+    <pre><code>mkdir lab1              # 建目录
+mkdir -p a/b/c          # 一次建多层，-p = parent
+touch note.txt          # 建空文件（也能更新文件时间）
+cp note.txt backup.txt  # 复制
+mv note.txt docs/       # 移动进目录
+mv old.txt new.txt      # 改名（目标是“不存在的名字”时）
+rm note.txt             # 删除文件
+rm -r docs              # 删目录必须加 -r</code></pre>
+
+    <p><strong><code>rm</code> 没有回收站</strong>，删掉就没了。新手阶段建议加 <code>-i</code>，删之前先问一句。</p>
+
+    <h3>cp 和 mv 到底差在哪</h3>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th></th><th><code>cp</code></th><th><code>mv</code></th></tr></thead>
+        <tbody>
+          <tr><td>做什么</td><td>复制一份，原件还在</td><td>搬走，原件消失</td></tr>
+          <tr><td>Windows 对应</td><td>复制 + 粘贴</td><td>剪切 + 粘贴</td></tr>
+          <tr><td>目录要不要 <code>-r</code></td><td>要</td><td>不要</td></tr>
+          <tr><td>目标已存在</td><td colspan="2">都会<strong>静默覆盖</strong>，加 <code>-i</code> 才会问</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>三、写入与查看</h2>
+
+    <p>命令的输出默认去屏幕。用 <code>&gt;</code> 可以改道写进文件：</p>
+
+    <pre><code>echo "hello" &gt; a.txt      # 覆盖写入（旧内容清空）
+echo "world" &gt;&gt; a.txt     # 追加写入（旧内容保留）
+seq 1 20 &gt; nums.txt       # 生成 1~20，每行一个</code></pre>
+
+    <blockquote>
+      <p><strong><code>&gt;</code> 会先清空文件，再执行命令。</strong>所以命令写错时，文件内容照样会没。这是最容易丢数据的一个符号，不确定时用 <code>&gt;&gt;</code>。</p>
+    </blockquote>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>命令</th><th>用途</th></tr></thead>
+        <tbody>
+          <tr><td><code>cat 文件</code></td><td>一次性全部输出，适合短文件</td></tr>
+          <tr><td><code>less 文件</code></td><td>一屏一屏翻，<code>q</code> 退出，<code>/关键词</code> 搜索</td></tr>
+          <tr><td><code>head -5 文件</code></td><td>前 5 行</td></tr>
+          <tr><td><code>tail -5 文件</code></td><td>后 5 行</td></tr>
+          <tr><td><code>wc -l 文件</code></td><td>数行数</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>四、管道：把小命令串成大工具</h2>
+
+    <p>竖线 <code>|</code> 把左边命令的输出，直接交给右边命令处理。每个命令只做一件小事，管道负责组合——这是 Linux 的设计哲学。</p>
+
+    <pre><code>cat nums.txt | grep 1      # 只留含字符"1"的行：1、10~19
+ls | wc -l                 # 数当前目录有几个东西
+seq 1 100 | grep 9 | head -3   # 生成 100 行 → 筛出含 9 的 → 只看前 3 行</code></pre>
+
+    <p><strong>注意 grep 匹配的是“字符片段”，不是数字。</strong>所以 <code>grep 1</code> 会把 <code>10</code>、<code>11</code>、<code>19</code> 都选出来——它们都含有字符 1。</p>
+
+    <h2>五、vim：只能靠肌肉记忆的部分</h2>
+
+    <p>vim 有“模式”，打开后直接敲键盘打不出字，因为你在<strong>普通模式</strong>。</p>
+
+    <pre><code>vim hello.txt     # 打开（不存在会新建）
+
+i                 # 进入插入模式，开始打字
+Esc               # 回普通模式
+:wq               # 保存并退出
+:q!               # 不保存，强制退出</code></pre>
+
+    <p>普通模式下几个够用的键：<code>dd</code> 删整行、<code>u</code> 撤销、<code>x</code> 删一个字符、<code>gg</code> 到开头、<code>G</code> 到结尾。</p>
+
+    <blockquote>
+      <p>不要直接关终端窗口退出 vim，会留下 <code>.swp</code> 临时文件，下次打开会弹警告。按 <code>D</code> 删掉、<code>R</code> 恢复。</p>
+    </blockquote>
+
+    <h2>六、权限：那一串 rwxr-xr-x 怎么读</h2>
+
+    <pre><code>-rw-r--r-- 1 kali kali 51 Nov  3 11:51 nums.txt
+│└┬┘└┬┘└┬┘
+│ │  │  └── 其他人：r--（只读）
+│ │  └───── 同组：r--
+│ └──────── 所有者：rw-（读写）
+└────────── 类型：- 文件 / d 目录 / l 链接</code></pre>
+
+    <p>把 rwx 当三个开关，有就是 1，加起来就是数字权限：</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>权限</th><th>数字</th><th>常见用途</th></tr></thead>
+        <tbody>
+          <tr><td><code>rwx</code></td><td>7</td><td>可执行程序、目录</td></tr>
+          <tr><td><code>rw-</code></td><td>6</td><td>普通文件的所有者</td></tr>
+          <tr><td><code>r-x</code></td><td>5</td><td>目录的同组/其他人</td></tr>
+          <tr><td><code>r--</code></td><td>4</td><td>只读</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <pre><code>ls -l           # 看权限
+chmod +x hi.sh  # 加执行权限
+chmod 644 a.txt # 精确设置：所有者读写，其他人只读
+chmod 755 dir   # 目录常用：自己可读写执行，其他人可读可进
+umask           # 看新建文件的默认权限扣减（Kali 是 002）</code></pre>
+
+    <p>一个直接结论：<strong>文件能不能当程序运行，看的不是后缀，而是有没有 <code>x</code>。</strong></p>
+
+    <h2>七、脚本与编译：两条让文件“能跑”的路</h2>
+
+    <h3>路一：脚本，交给解释器逐行执行</h3>
+
+    <pre><code>#!/bin/bash
+echo "hello from my script"</code></pre>
+
+    <pre><code>chmod +x hi.sh
+./hi.sh</code></pre>
+
+    <p>第一行的 <code>#!/bin/bash</code> 叫 shebang，告诉内核“用 bash 来跑这个文件”。少了它、或写错成 <code>#!/bin/bash/</code>（多一个斜杠），就会报 <code>not a directory</code>。</p>
+
+    <h3>路二：编译，翻译成机器码</h3>
+
+    <pre><code>#include &lt;stdio.h&gt;
+
+int main() {
+    printf("hello, world\n");
+    return 0;
+}</code></pre>
+
+    <pre><code>gcc hello.c -o hello    # 把源码编译成可执行文件
+./hello                 # 运行</code></pre>
+
+    <p><code>-o</code> 只负责给输出文件起名，不写就是默认的 <code>a.out</code>。编译出的文件自带 <code>x</code> 权限，不需要再 <code>chmod</code>。</p>
+
+    <h2>八、装软件</h2>
+
+    <pre><code>sudo apt update            # 刷新软件源目录（不是升级软件）
+apt search 关键词           # 搜
+sudo apt install 包名       # 装
+sudo apt remove 包名        # 卸载
+sudo apt autoremove        # 清理没人用的依赖</code></pre>
+
+    <p>遇到 <code>apt update</code> 卡住、超时，第一反应是<strong>换国内镜像源</strong>（清华、阿里、中科大都有 kali 或 ubuntu 镜像），而不是怀疑网络断了。</p>
+
+    <h2>九、报错怎么读</h2>
+
+    <p>新手和熟手最大的差别不是记住多少命令，而是<strong>会不会读报错</strong>。</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>报错</th><th>含义</th><th>先查什么</th></tr></thead>
+        <tbody>
+          <tr><td><code>command not found</code></td><td>没有这个命令</td><td>拼写、是否安装</td></tr>
+          <tr><td><code>No such file or directory</code></td><td>文件不存在</td><td><code>ls</code> 确认名字和当前位置</td></tr>
+          <tr><td><code>Permission denied</code></td><td>权限不足</td><td><code>ls -l</code> 看有没有 <code>x</code> / <code>w</code></td></tr>
+          <tr><td><code>not a directory</code></td><td>路径类型不对</td><td>末尾是否多了斜杠</td></tr>
+          <tr><td><code>Is a directory</code></td><td>把目录当文件操作</td><td><code>cat</code> 了目录</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>还有一句经验：Linux 成功时通常<strong>什么都不说</strong>，沉默即成功。只有出错才会开口。</p>
+
+    <a class="back" href="../index.html">← 返回首页</a>
+  </article>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© 2026 /var/log/me</span>
+    <span>用 HTML + CSS <span class="heart">手写</span>，托管于静态站点</span>
+  </div>
+</footer>
+
+</body>
+</html>

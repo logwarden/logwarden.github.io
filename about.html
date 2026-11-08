@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>关于 · /var/log/me</title>
+<meta name="description" content="关于我和这个运维日志。">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wrap">
+    <a class="brand" href="index.html"><span class="dot"></span>/var/log/me</a>
+    <nav>
+      <a href="index.html">首页</a>
+      <a href="about.html" class="active">关于</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <article class="article">
+    <h1>关于</h1>
+    <div class="post-meta"><span>最后更新 2026-11-08</span></div>
+
+    <p>网络安全专业在读，目标方向是运维。目前正在从最基础的 Linux 命令行开始，一步步补基本功。</p>
+
+    <h2>为什么叫 /var/log/me</h2>
+
+    <p><code>/var/log</code> 是 Linux 存放日志的目录。服务器上出的每一个问题，都会在那里留下痕迹——谁在什么时候登录过、哪个服务崩了、磁盘什么时候写满的。排查故障，第一步永远是去看日志。</p>
+
+    <p>我把自己当成一个正在被 <code>tail -f</code> 盯着的日志文件：写下来，才能回看自己是怎么一步步出错的，又是怎么修好的。想不起来的东西不算学会。</p>
+
+    <h2>这里会写什么</h2>
+    <ul>
+      <li><strong>Linux 系统管理</strong>：命令、权限、进程、systemd、日志与排障</li>
+      <li><strong>Shell 脚本与自动化</strong>：日常巡检、批量操作、定时备份</li>
+      <li><strong>服务部署</strong>：Nginx、Docker、云服务器的安装与配置记录</li>
+      <li><strong>故障现场</strong>：真实的报错、我的误判、最后是怎么定位的</li>
+      <li><strong>安全加固</strong>：既然是网安出身，也会记一点基线加固和主机安全</li>
+    </ul>
+
+    <h2>我怎么学习</h2>
+    <blockquote>
+      <p>先在虚拟机里把环境搭起来，把命令敲一遍，把报错读一遍，然后再写笔记。看十遍教程，不如自己把一条命令敲错三次。</p>
+    </blockquote>
+
+    <h2>联系</h2>
+    <p>如果你也在学这些，欢迎交流。</p>
+
+    <a class="back" href="index.html">← 返回首页</a>
+  </article>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© 2026 /var/log/me</span>
+    <span>用 HTML + CSS <span class="heart">手写</span>，托管于 GitHub Pages</span>
+  </div>
+</footer>
+
+</body>
+</html>
